@@ -1,0 +1,25 @@
+{
+  "name": "dwt.js",
+  "version": "1.0.0",
+  "description": "Dynamic Time Warping Implemented in Javascript",
+  "main": "dtw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PseudoSky/dwt.js.git"
+  },
+  "keywords": [
+    "DTW",
+    "Classification",
+    "ML",
+    "Signals"
+  ],
+  "author": "Sky Krauthamer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PseudoSky/dwt.js/issues"
+  },
+  "homepage": "https://github.com/PseudoSky/dwt.js#readme"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "dwt.js",
+  "version": "0.0.1",
+  "authors": [
+    "snow <kkrautha@andrew.cmu.edu>"
+  ],
+  "description": "Dynamic Time Warping Implemented in Javascript",
+  "main": "dwt.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "DTW",
+    "Classification",
+    "ML",
+    "Signals"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/PseudoSky/dwt.js.git",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
