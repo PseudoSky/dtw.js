@@ -202,6 +202,28 @@ function argmin( arr ) {
     }
     return idx;  
 } 
+function argmax( arr ) {
+    if ( !Array.isArray( arr ) ) {
+        throw new TypeError( 'argmin()::invalid input argument. Must provide an array.' );
+    }
+    var len = arr.length,
+        min = arr[ 0 ],
+        idx = [ 0 ],
+        val;
+
+    for ( var i = 1; i < len; i++ ) {
+        val = arr[ i ];
+        if ( val > min ) {
+            min = val;
+            idx.length = 0;
+            idx.push( i );
+        }
+        else if ( val === min ) {
+            idx.push( i );
+        }
+    }
+    return idx;  
+} 
 
 var sum = function(a){
     return a.flatten().reduce(function(a, b) {
@@ -232,7 +254,8 @@ function euclidean_distance(a, b) {
 }
 
 
-function dtw(x, y, dist){
+
+ function dtw(x, y, dist){
 
     // Computes Dynamic Time Warping (DTW) of two sequences.
     // :param array x: N1*M array
@@ -240,8 +263,8 @@ function dtw(x, y, dist){
     // :param func dist: distance used as cost measure
     // Returns the minimum distance, the cost matrix, the accumulated cost matrix, and the wrap path.
 
-    c = len(x);
-    r = len(y);
+    var c = len(x);
+    var r = len(y);
 
     if(c==0 || r==0) return -1;
 
@@ -318,7 +341,7 @@ function dtw(x, y, dist){
 
 
 
-    C = D1.copy()
+    var C = D1.copy()
     // EXAMPLE 1
     // [[  1.   2.   3.   5.   7.   9.  11.  14.  16.  16.]
     //  [  2.   2.   3.   5.   7.   9.  11.  14.  16.  16.]
@@ -358,7 +381,7 @@ function dtw(x, y, dist){
         path = _traceback(D0)
     }
     dl=D1.length-1
-    return [D1[dl][D1[dl].length-1] / (dl+1+D1[dl].length), C, D1, path]
+    return [1-(D1[dl][D1[dl].length-1] / (dl+1+D1[dl].length)), C, D1, path]
 }
 
 
@@ -409,7 +432,7 @@ function test2(){
         //y = 'we talked about the situation'.split()
         dist_fun = edit_distance
     }
-    dist, cost, acc, path = dtw(x, y, dist_fun)
+    // dist, cost, acc, path = dtw(x, y, dist_fun);
 
     // vizualize
     // from matplotlib import pyplot as plt
@@ -441,15 +464,17 @@ function test(type){
         x     = [0, 0, 1, 1, 2, 4, 2, 1, 2, 0];
         y     = [1, 1, 1, 2, 2, 2, 2, 3, 2, 0];
     }
-    print(dtw(x, y, dist))
+    print(dtw(x, y, dist));
 }
 
-test("string")
-test()
-
-print(dtw([1,2,3,4,55,8,89,22,1],[1,2,3,4,55,6,89,22,0],euclidean_norm))
-print(dtw(['i','he', 'himself'],['see', 'drown', 'himself'],levenshtein))
-print(euclidean_norm(80,90))
+// test("string")
+// test()
+// var incoming=[ 3, 8, 14 ,1,2,3,7];
+// var temper=[ 3, 8, 14 ,1,2,3 ];
+// print(dtw(incoming,temper,euclidean_norm));
+// print(dtw([1,2,3,4,55,8,89,22,1],[1,2,3,4,55,6,89,22,0],euclidean_norm))
+// print(dtw(['i','he', 'himself'],['see', 'drown', 'himself'],levenshtein))
+// print(euclidean_norm(80,90))
 /************************************ EXPECTED OUTPUT ************************************/
 
 
@@ -571,3 +596,76 @@ print(euclidean_norm(80,90))
 
 //   [ [ 0, 1, 2, 3, 4, 5, 6, 7 ], 
 //     [ 0, 0, 0, 0, 0, 0, 1, 2 ] ] ]
+
+
+
+
+
+
+
+
+
+
+
+function Classifier(alg,templates,dist,gap){
+
+    var self=this;
+    self.algo=alg;
+    self.dist=dist;
+    self.tmp=templates;
+    self.stream=[];
+    self.odds={};
+    self.win=self.tmp[0].length+100;
+    self.gap=gap || 1;
+    self.gap_counter=0;
+    self.sample = function(el){
+
+        if((self.stream.length)&&(self.stream.length!=0)&&(self.win==self.stream.length)){
+            self.stream.shift();
+
+        };
+        self.stream.push(el);
+        self.gap_counter=self.gap_counter+1;
+
+        if(self.gap_counter==self.gap && (self.win>=self.stream.length)){
+            self.odds=new Object({});
+            for(var ex=0; ex<self.tmp.length; ex++){
+                self.odds[ex]=self.algo(self.tmp[ex], self.stream, self.dist)[0];
+            }
+            max = argmax(Object.keys(self.odds).map(function ( key ) { return self.odds[key] }));
+            console.log("Most Likely: "+max+", "+self.odds[max]);
+            self.gap_counter=0;
+        }
+
+    }
+
+    return this;
+}
+
+
+
+
+function test_classifier(count){
+    var cur_time = Date.now();
+    var templates=[
+        [ 0, 0.9090909090909092, 2.2032085561497325, 3.2032085561497325, 3.6032085561497325, 3.6032085561497325 ],
+        [ 2.9, 0.9090909090909092, 2.2032085561497325, 3.2032085561497325, 3.6032085561497325, 3.6032085561497325 ],
+        [ 0, 0.9090909090909092, 2.2032085561497325, 3.2032085561497325, 3.6032085561497325, 3.6032085597325 ],
+        [0.9090909090909092,2.2032085561497325,3.2032085561497325,1.6032085561497325,3.6032085561497325],
+        [.7397169237358767,2.1315094660917784,2.0771225947577925,2.1173824118549893,1.8916483026964062]];
+    var c=new Classifier(dtw,templates,euclidean_norm);
+    // console.log('C',C);
+    for ( var sky = 1; sky < count; sky++ ) {
+        next=Math.random()*2.2032085561497325+1
+        c.sample(next);
+    }
+    var end_time = Date.now();
+
+    var timeDifference = end_time - cur_time;
+    var differenceDate = new Date(timeDifference * 100);
+    var diffHours = differenceDate.getUTCHours()+ ':' +differenceDate.getUTCMinutes()+ ':' +differenceDate.getUTCSeconds();
+    console.log('Elapsed',diffHours);
+
+
+}
+// test_classifier(50000)
